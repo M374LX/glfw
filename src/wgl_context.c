@@ -200,7 +200,7 @@ static int _glfwChoosePixelFormatWGL(_GLFWwindow* window,
             {
                 if (_glfw.wgl.EXT_colorspace)
                 {
-                    if (_FIND_ATTRIB_VALUE(WGL_COLORSPACE_EXT) == WGL_COLORSPACE_SRGB_EXT)
+                    if (_GLFW_FIND_ATTRIB_VALUE(WGL_COLORSPACE_EXT) == WGL_COLORSPACE_SRGB_EXT)
                         u->sRGB = true;
                 }
             }
