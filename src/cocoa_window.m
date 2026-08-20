@@ -603,8 +603,8 @@ static const NSRange _glfwKEmptyRangeCocoa = { NSNotFound, 0 };
 {
     // HACK: Some key combinations are consumed before reaching keyDown:
     //       so we claim those events and emit them here
-    const int key = translateKey([event keyCode]);
-    const int mods = translateFlags([event modifierFlags]);
+    const int key = _glfwTranslateKeyCocoa([event keyCode]);
+    const int mods = _glfwTranslateFlagsCocoa([event modifierFlags]);
 
     if (mods & GLFW_MOD_CONTROL)
     {
