@@ -194,7 +194,7 @@ static int _glfwChoosePixelFormatWGL(_GLFWwindow* window,
             if (ctxconfig->client == GLFW_OPENGL_API)
             {
                 if (_glfw.wgl.ARB_framebuffer_sRGB || _glfw.wgl.EXT_framebuffer_sRGB)
-                    u->sRGB = _FIND_ATTRIB_VALUE(WGL_FRAMEBUFFER_SRGB_CAPABLE_ARB);
+                    u->sRGB = _GLFW_FIND_ATTRIB_VALUE(WGL_FRAMEBUFFER_SRGB_CAPABLE_ARB);
             }
             else
             {

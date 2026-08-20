@@ -1332,7 +1332,7 @@ static int _glfwCreateNativeWindowWin32(_GLFWwindow* window,
             cursorPixels[3] = 1;
 
             const GLFWimage cursorImage = { cursorWidth, cursorHeight, cursorPixels };
-            _glfw.win32.blankCursor = createIcon(&cursorImage, 0, 0, FALSE);
+            _glfw.win32.blankCursor = _glfwCreateIconWin32(&cursorImage, 0, 0, FALSE);
             _glfw_free(cursorPixels);
 
             if (!_glfw.win32.blankCursor)
