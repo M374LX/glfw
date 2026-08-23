@@ -73,7 +73,7 @@ static GLFWbool _glfwChooseConfigGLX(const _GLFWfbconfig* desired,
         return GLFW_FALSE;
     }
 
-    usableConfigs = _glfw_calloc(nativeCount, sizeof(_GLFWfbconfig));
+    usableConfigs = (_GLFWfbconfig*) _glfw_calloc(nativeCount, sizeof(_GLFWfbconfig));
     usableCount = 0;
 
     for (int i = 0;  i < nativeCount;  i++)
@@ -187,7 +187,7 @@ static void _glfwSwapBuffersGLX(_GLFWwindow* window)
 
 static void _glfwSwapIntervalGLX(int interval)
 {
-    _GLFWwindow* window = _glfwPlatformGetTls(&_glfw.contextSlot);
+    _GLFWwindow* window = (_GLFWwindow*) _glfwPlatformGetTls(&_glfw.contextSlot);
     assert(window != NULL);
 
     if (_glfw.glx.EXT_swap_control)

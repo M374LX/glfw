@@ -255,8 +255,8 @@ static void _glfwCloseJoystickLinux(_GLFWjoystick* js)
 //
 static int _glfwCompareJoysticksLinux(const void* fp, const void* sp)
 {
-    const _GLFWjoystick* fj = fp;
-    const _GLFWjoystick* sj = sp;
+    const _GLFWjoystick* fj = (_GLFWjoystick*) fp;
+    const _GLFWjoystick* sj = (_GLFWjoystick*) sp;
     return strcmp(fj->linjs.path, sj->linjs.path);
 }
 

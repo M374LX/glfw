@@ -443,7 +443,7 @@ static char* _glfwConvertLatin1toUTF8X11(const char* source)
     for (sp = source;  *sp;  sp++)
         size += (*sp & 0x80) ? 2 : 1;
 
-    char* target = _glfw_calloc(size, 1);
+    char* target = (char*) _glfw_calloc(size, 1);
     char* tp = target;
 
     for (sp = source;  *sp;  sp++)
@@ -1038,7 +1038,7 @@ static const char* _glfwGetSelectionStringX11(Atom selection)
                 if (itemCount)
                 {
                     size += itemCount;
-                    string = _glfw_realloc(string, size);
+                    string = (char*) _glfw_realloc(string, size);
                     string[size - itemCount - 1] = '\0';
                     strcat(string, data);
                 }
@@ -1194,7 +1194,7 @@ static void _glfwProcessEventX11(XEvent *event)
                 XGetEventData(_glfw.x11.display, &event->xcookie) &&
                 event->xcookie.evtype == XI_RawMotion)
             {
-                XIRawEvent* re = event->xcookie.data;
+                XIRawEvent* re = (XIRawEvent*) event->xcookie.data;
                 if (re->valuators.mask_len)
                 {
                     const double* values = re->raw_values;
@@ -1282,7 +1282,7 @@ static void _glfwProcessEventX11(XEvent *event)
 
                     if (status == XBufferOverflow)
                     {
-                        chars = _glfw_calloc(count + 1, 1);
+                        chars = (char*) _glfw_calloc(count + 1, 1);
                         count = Xutf8LookupString(window->x11.ic,
                                                   &event->xkey,
                                                   chars, count,
@@ -2115,7 +2115,7 @@ void _glfwSetWindowIconX11(_GLFWwindow* window, int count, const GLFWimage* imag
         for (int i = 0;  i < count;  i++)
             longCount += 2 + images[i].width * images[i].height;
 
-        unsigned long* icon = _glfw_calloc(longCount, sizeof(unsigned long));
+        unsigned long* icon = (unsigned long*) _glfw_calloc(longCount, sizeof(unsigned long));
         unsigned long* target = icon;
 
         for (int i = 0;  i < count;  i++)
@@ -3130,7 +3130,7 @@ EGLenum _glfwGetEGLPlatformX11(EGLint** attribs)
 
         if (type)
         {
-            *attribs = _glfw_calloc(5, sizeof(EGLint));
+            *attribs = (EGLint*) _glfw_calloc(5, sizeof(EGLint));
             (*attribs)[0] = EGL_PLATFORM_ANGLE_TYPE_ANGLE;
             (*attribs)[1] = type;
             (*attribs)[2] = EGL_PLATFORM_ANGLE_NATIVE_PLATFORM_TYPE_ANGLE;

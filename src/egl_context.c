@@ -343,7 +343,7 @@ static GLFWglproc _glfwGetProcAddressEGL(const char* procname)
 
     if (!_glfw.egl.KHR_get_all_proc_addresses)
     {
-        _GLFWwindow* window = _glfwPlatformGetTls(&_glfw.contextSlot);
+        _GLFWwindow* window = (_GLFWwindow*) _glfwPlatformGetTls(&_glfw.contextSlot);
         assert(window != NULL);
 
         return _glfwPlatformGetModuleSymbol(window->context.egl.client, procname);
