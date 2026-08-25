@@ -164,8 +164,8 @@ static void _glfwRegistryHandleGlobalWayland(void* userData,
     {
         _glfw.wl.decorationManager =
             (struct zxdg_decoration_manager_v1*)
-             wl_registry_bind(registry, name,
-                              &zxdg_decoration_manager_v1_interface, 1);
+            wl_registry_bind(registry, name,
+                             &zxdg_decoration_manager_v1_interface, 1);
     }
     else if (strcmp(interface, "wp_viewporter") == 0)
     {

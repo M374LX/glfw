@@ -96,7 +96,7 @@ static int _glfwCreateTmpfileCloexecWayland(char* tmpname)
  */
 static int _glfwCreateAnonymousFileWayland(off_t size)
 {
-    static const char template[] = "/glfw-shared-XXXXXX";
+    static const char name_template[] = "/glfw-shared-XXXXXX";
     const char* path;
     char* name;
     int fd;
@@ -126,9 +126,9 @@ static int _glfwCreateAnonymousFileWayland(off_t size)
             return -1;
         }
 
-        name = _glfw_calloc(strlen(path) + sizeof(template), 1);
+        name = (char*) _glfw_calloc(strlen(path) + sizeof(name_template), 1);
         strcpy(name, path);
-        strcat(name, template);
+        strcat(name, name_template);
 
         fd = _glfwCreateTmpfileCloexecWayland(name);
         _glfw_free(name);
