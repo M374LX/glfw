@@ -2078,7 +2078,7 @@ static const struct wl_keyboard_listener _glfwKeyboardListenerWayland =
 
 static void _glfwSeatHandleCapabilitiesWayland(void* userData,
                                                struct wl_seat* seat,
-                                               enum wl_seat_capability caps)
+                                               uint32_t caps)
 {
     if ((caps & WL_SEAT_CAPABILITY_POINTER) && !_glfw.wl.pointer)
     {
