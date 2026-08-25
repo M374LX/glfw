@@ -727,7 +727,7 @@ static void _glfwXdgToplevelHandleConfigureWayland(void* userData,
                                                    struct wl_array* states)
 {
     _GLFWwindow* window = (_GLFWwindow*) userData;
-    void* state;
+    uint32_t* state;
 
     window->wl.pending.activated  = GLFW_FALSE;
     window->wl.pending.maximized  = GLFW_FALSE;
@@ -735,7 +735,7 @@ static void _glfwXdgToplevelHandleConfigureWayland(void* userData,
 
     wl_array_for_each(state, states)
     {
-        switch (*((uint32_t*) state))
+        switch (*state)
         {
             case XDG_TOPLEVEL_STATE_MAXIMIZED:
                 window->wl.pending.maximized = GLFW_TRUE;
