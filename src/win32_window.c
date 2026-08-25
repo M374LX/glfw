@@ -1322,7 +1322,8 @@ static int _glfwCreateNativeWindowWin32(_GLFWwindow* window,
             const int cursorWidth = GetSystemMetrics(SM_CXCURSOR);
             const int cursorHeight = GetSystemMetrics(SM_CYCURSOR);
 
-            unsigned char* cursorPixels = _glfw_calloc(cursorWidth * cursorHeight, 4);
+            unsigned char* cursorPixels =
+                (unsigned char*) _glfw_calloc(cursorWidth * cursorHeight, 4);
             if (!cursorPixels)
                 return GLFW_FALSE;
 
