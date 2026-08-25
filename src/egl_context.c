@@ -313,7 +313,7 @@ static void _glfwSwapIntervalEGL(int interval)
 #if defined(_GLFW_WAYLAND)
     if (_glfw.platform.platformID == GLFW_PLATFORM_WAYLAND)
     {
-        _GLFWwindow* window = _glfwPlatformGetTls(&_glfw.contextSlot);
+        _GLFWwindow* window = (_GLFWwindow*) _glfwPlatformGetTls(&_glfw.contextSlot);
         assert(window != NULL);
         window->wl.egl.interval = interval;
         return;

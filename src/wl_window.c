@@ -179,7 +179,7 @@ static struct wl_buffer* _glfwCreateShmBufferWayland(const GLFWimage* image)
     close(fd);
 
     unsigned char* source = (unsigned char*) image->pixels;
-    unsigned char* target = data;
+    unsigned char* target = (unsigned char*) data;
     for (int i = 0;  i < image->width * image->height;  i++, source += 4)
     {
         unsigned int alpha = source[3];
@@ -442,7 +442,7 @@ static void _glfwXdgDecorationHandleConfigureWayland(void* userData,
                                                      struct zxdg_toplevel_decoration_v1* decoration,
                                                      uint32_t mode)
 {
-    _GLFWwindow* window = userData;
+    _GLFWwindow* window = (_GLFWwindow*) userData;
 
     window->wl.xdg.decorationMode = mode;
 
@@ -593,8 +593,8 @@ static void _glfwSurfaceHandleEnterWayland(void* userData,
     if (wl_proxy_get_tag((struct wl_proxy*) output) != &_glfw.wl.tag)
         return;
 
-    _GLFWwindow* window = userData;
-    _GLFWmonitor* monitor = wl_output_get_user_data(output);
+    _GLFWwindow* window = (_GLFWwindow*) userData;
+    _GLFWmonitor* monitor = (_GLFWmonitor*) wl_output_get_user_data(output);
     if (!window || !monitor)
         return;
 
@@ -602,6 +602,7 @@ static void _glfwSurfaceHandleEnterWayland(void* userData,
     {
         window->wl.outputScaleSize++;
         window->wl.outputScales =
+            (_GLFWscaleWayland*)
             _glfw_realloc(window->wl.outputScales,
                           window->wl.outputScaleSize * sizeof(_GLFWscaleWayland));
     }
@@ -620,7 +621,7 @@ static void _glfwSurfaceHandleLeaveWayland(void* userData,
     if (wl_proxy_get_tag((struct wl_proxy*) output) != &_glfw.wl.tag)
         return;
 
-    _GLFWwindow* window = userData;
+    _GLFWwindow* window = (_GLFWwindow*) userData;
 
     for (size_t i = 0; i < window->wl.outputScaleCount; i++)
     {
@@ -704,7 +705,7 @@ void _glfwFractionalScaleHandlePreferredScaleWayland(void* userData,
                                                      struct wp_fractional_scale_v1* fractionalScale,
                                                      uint32_t numerator)
 {
-    _GLFWwindow* window = userData;
+    _GLFWwindow* window = (_GLFWwindow*) userData;
 
     window->wl.scalingNumerator = numerator;
     _glfwInputWindowContentScale(window, numerator / 120.f, numerator / 120.f);
@@ -725,7 +726,7 @@ static void _glfwXdgToplevelHandleConfigureWayland(void* userData,
                                                    int32_t height,
                                                    struct wl_array* states)
 {
-    _GLFWwindow* window = userData;
+    _GLFWwindow* window = (_GLFWwindow*) userData;
     uint32_t* state;
 
     window->wl.pending.activated  = GLFW_FALSE;
@@ -774,7 +775,7 @@ static void _glfwXdgToplevelHandleConfigureWayland(void* userData,
 static void _glfwXdgToplevelHandleCloseWayland(void* userData,
                                    struct xdg_toplevel* toplevel)
 {
-    _GLFWwindow* window = userData;
+    _GLFWwindow* window = (_GLFWwindow*) userData;
     _glfwInputWindowCloseRequest(window);
 }
 
@@ -788,7 +789,7 @@ static void _glfwXdgSurfaceHandleConfigureWayland(void* userData,
                                                   struct xdg_surface* surface,
                                                   uint32_t serial)
 {
-    _GLFWwindow* window = userData;
+    _GLFWwindow* window = (_GLFWwindow*) userData;
 
     xdg_surface_ack_configure(surface, serial);
 
@@ -855,7 +856,7 @@ void _glfwLibdecorFrameHandleConfigureWayland(struct libdecor_frame* frame,
                                               struct libdecor_configuration* config,
                                               void* userData)
 {
-    _GLFWwindow* window = userData;
+    _GLFWwindow* window = (_GLFWwindow*) userData;
     int width, height;
 
     enum libdecor_window_state windowState;
@@ -941,13 +942,13 @@ void _glfwLibdecorFrameHandleConfigureWayland(struct libdecor_frame* frame,
 
 void _glfwLibdecorFrameHandleCloseWayland(struct libdecor_frame* frame, void* userData)
 {
-    _GLFWwindow* window = userData;
+    _GLFWwindow* window = (_GLFWwindow*) userData;
     _glfwInputWindowCloseRequest(window);
 }
 
 void _glfwLibdecorFrameHandleCommitWayland(struct libdecor_frame* frame, void* userData)
 {
-    _GLFWwindow* window = userData;
+    _GLFWwindow* window = (_GLFWwindow*) userData;
     wl_surface_commit(window->wl.surface);
 }
 
@@ -1296,7 +1297,8 @@ static void _glfwIncrementCursorImageWayland(void)
     if (!_glfw.wl.pointerSurface)
         return;
 
-    _GLFWwindow* window = wl_surface_get_user_data(_glfw.wl.pointerSurface);
+    _GLFWwindow* window =
+        (_GLFWwindow*) wl_surface_get_user_data(_glfw.wl.pointerSurface);
     if (window->wl.surface != _glfw.wl.pointerSurface)
         return;
 
@@ -1503,7 +1505,7 @@ static char* _glfwReadDataOfferAsStringWayland(struct wl_data_offer* offer, cons
         const size_t requiredSize = length + readSize + 1;
         if (requiredSize > size)
         {
-            char* longer = _glfw_realloc(string, requiredSize);
+            char* longer = (char*) _glfw_realloc(string, requiredSize);
             if (!longer)
             {
                 _glfwInputError(GLFW_OUT_OF_MEMORY, NULL);
@@ -1545,7 +1547,8 @@ static void _glfwProcessPointerEnterSurfaceWayland(struct wl_surface* surface)
 {
     _glfw.wl.pointerSurface = surface;
 
-    _GLFWwindow* window = wl_surface_get_user_data(_glfw.wl.pointerSurface);
+    _GLFWwindow* window =
+        (_GLFWwindow*) wl_surface_get_user_data(_glfw.wl.pointerSurface);
     if (window->wl.surface == _glfw.wl.pointerSurface)
     {
         _glfwSetCursorWayland(window, window->cursor);
@@ -1557,7 +1560,7 @@ static void _glfwProcessPointerLeaveSurfaceWayland(struct wl_surface* surface)
 {
     _glfw.wl.pointerSurface = NULL;
 
-    _GLFWwindow* window = wl_surface_get_user_data(surface);
+    _GLFWwindow* window = (_GLFWwindow*) wl_surface_get_user_data(surface);
     if (window->wl.surface == surface)
         _glfwInputCursorEnter(window, GLFW_FALSE);
     else
@@ -1569,7 +1572,8 @@ static void _glfwProcessPointerLeaveSurfaceWayland(struct wl_surface* surface)
 
 static void _glfwProcessPointerMotionWayland(double xpos, double ypos)
 {
-    _GLFWwindow* window = wl_surface_get_user_data(_glfw.wl.pointerSurface);
+    _GLFWwindow* window =
+        (_GLFWwindow*) wl_surface_get_user_data(_glfw.wl.pointerSurface);
     if (window->wl.surface == _glfw.wl.pointerSurface)
     {
         if (window->cursorMode != GLFW_CURSOR_DISABLED)
@@ -1588,7 +1592,8 @@ static void _glfwProcessPointerMotionWayland(double xpos, double ypos)
 
 static void _glfwProcessPointerButtonWayland(int button, int action)
 {
-    _GLFWwindow* window = wl_surface_get_user_data(_glfw.wl.pointerSurface);
+    _GLFWwindow* window =
+        (_GLFWwindow*) wl_surface_get_user_data(_glfw.wl.pointerSurface);
     if (window->wl.surface == _glfw.wl.pointerSurface)
         _glfwInputMouseClick(window, button, action, _glfw.wl.xkb.modifiers);
     else
@@ -1600,7 +1605,8 @@ static void _glfwProcessPointerButtonWayland(int button, int action)
 
 static void _glfwProcessPointerScrollWayland(double xoffset, double yoffset)
 {
-    _GLFWwindow* window = wl_surface_get_user_data(_glfw.wl.pointerSurface);
+    _GLFWwindow* window =
+        (_GLFWwindow*) wl_surface_get_user_data(_glfw.wl.pointerSurface);
     if (window->wl.surface == _glfw.wl.pointerSurface)
         _glfwInputScroll(window, xoffset, yoffset);
 }
@@ -1698,7 +1704,8 @@ static void _glfwPointerHandleButtonWayland(void* userData,
     const int button = buttonID - BTN_LEFT;
     const int action = (state == WL_POINTER_BUTTON_STATE_PRESSED);
 
-    _GLFWwindow* window = wl_surface_get_user_data(_glfw.wl.pointerSurface);
+    _GLFWwindow* window =
+        (_GLFWwindow*) wl_surface_get_user_data(_glfw.wl.pointerSurface);
     if (window->wl.fallback.decorations)
     {
         if (action == GLFW_PRESS)
@@ -1839,7 +1846,7 @@ static void _glfwKeyboardHandleKeymapWayland(void* userData,
         return;
     }
 
-    mapStr = mmap(NULL, size, PROT_READ, MAP_PRIVATE, fd, 0);
+    mapStr = (char*) mmap(NULL, size, PROT_READ, MAP_PRIVATE, fd, 0);
     if (mapStr == MAP_FAILED)
     {
         close(fd);
@@ -1924,7 +1931,7 @@ static void _glfwKeyboardHandleEnterWayland(void* userData,
     if (wl_proxy_get_tag((struct wl_proxy*) surface) != &_glfw.wl.tag)
         return;
 
-    _GLFWwindow* window = wl_surface_get_user_data(surface);
+    _GLFWwindow* window = (_GLFWwindow*) wl_surface_get_user_data(surface);
     if (surface != window->wl.surface)
         return;
 
@@ -2151,6 +2158,7 @@ static void _glfwDataDeviceHandleDataOfferWayland(void* userData,
                                                   struct wl_data_offer* offer)
 {
     _GLFWofferWayland* offers =
+        (_GLFWofferWayland*)
         _glfw_realloc(_glfw.wl.offers,
                       sizeof(_GLFWofferWayland) * (_glfw.wl.offerCount + 1));
     if (!offers)
@@ -2194,7 +2202,7 @@ static void _glfwDataDeviceHandleEnterWayland(void* userData,
 
     if (surface && wl_proxy_get_tag((struct wl_proxy*) surface) == &_glfw.wl.tag)
     {
-        _GLFWwindow* window = wl_surface_get_user_data(surface);
+        _GLFWwindow* window = (_GLFWwindow*) wl_surface_get_user_data(surface);
         if (window->wl.surface == surface)
         {
             if (_glfw.wl.offers[i].text_uri_list)
@@ -2302,7 +2310,7 @@ static void _glfwXdgActivationHandleDoneWayland(void* userData,
                                                 struct xdg_activation_token_v1* activationToken,
                                                 const char* token)
 {
-    _GLFWwindow* window = userData;
+    _GLFWwindow* window = (_GLFWwindow*) userData;
 
     if (activationToken != window->wl.activationToken)
         return;
@@ -2319,7 +2327,7 @@ static const struct xdg_activation_token_v1_listener xdgActivationListener =
 
 static void _glfwCallbackHandleFrameWayland(void* userData, struct wl_callback* callback, uint32_t data)
 {
-    _GLFWwindow* window = userData;
+    _GLFWwindow* window = (_GLFWwindow*) userData;
     wl_callback_destroy(callback);
     window->wl.egl.callback = NULL;
 }
@@ -2411,7 +2419,9 @@ GLFWbool _glfwCreateWindowWayland(_GLFWwindow* window,
                 return GLFW_FALSE;
             }
 
-            window->wl.egl.wrapper = wl_proxy_create_wrapper(window->wl.surface);
+            window->wl.egl.wrapper =
+                (struct wl_surface*)
+                wl_proxy_create_wrapper(window->wl.surface);
             if (!window->wl.egl.wrapper)
             {
                 _glfwInputError(GLFW_PLATFORM_ERROR,
@@ -3175,7 +3185,7 @@ static void _glfwRelativePointerHandleRelativeMotionWayland(void* userData,
                                                             wl_fixed_t dxUnaccel,
                                                             wl_fixed_t dyUnaccel)
 {
-    _GLFWwindow* window = userData;
+    _GLFWwindow* window = (_GLFWwindow*) userData;
     double xpos = window->virtualCursorPosX;
     double ypos = window->virtualCursorPosY;
 

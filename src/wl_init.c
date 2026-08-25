@@ -112,17 +112,20 @@ static void _glfwRegistryHandleGlobalWayland(void* userData,
     if (strcmp(interface, "wl_compositor") == 0)
     {
         _glfw.wl.compositor =
+            (struct wl_compositor*)
             wl_registry_bind(registry, name, &wl_compositor_interface,
                              _glfw_min(3, version));
     }
     else if (strcmp(interface, "wl_subcompositor") == 0)
     {
         _glfw.wl.subcompositor =
+            (struct wl_subcompositor*)
             wl_registry_bind(registry, name, &wl_subcompositor_interface, 1);
     }
     else if (strcmp(interface, "wl_shm") == 0)
     {
         _glfw.wl.shm =
+            (struct wl_shm*)
             wl_registry_bind(registry, name, &wl_shm_interface, 1);
     }
     else if (strcmp(interface, "wl_output") == 0)
@@ -134,6 +137,7 @@ static void _glfwRegistryHandleGlobalWayland(void* userData,
         if (!_glfw.wl.seat)
         {
             _glfw.wl.seat =
+                (struct wl_seat*)
                 wl_registry_bind(registry, name, &wl_seat_interface,
                                  _glfw_min(8, version));
             _glfwAddSeatListenerWayland(_glfw.wl.seat);
@@ -144,6 +148,7 @@ static void _glfwRegistryHandleGlobalWayland(void* userData,
         if (!_glfw.wl.dataDeviceManager)
         {
             _glfw.wl.dataDeviceManager =
+                (struct wl_data_device_manager*)
                 wl_registry_bind(registry, name,
                                  &wl_data_device_manager_interface, 1);
         }
@@ -151,24 +156,27 @@ static void _glfwRegistryHandleGlobalWayland(void* userData,
     else if (strcmp(interface, "xdg_wm_base") == 0)
     {
         _glfw.wl.wmBase =
+            (struct xdg_wm_base*)
             wl_registry_bind(registry, name, &xdg_wm_base_interface, 1);
         xdg_wm_base_add_listener(_glfw.wl.wmBase, &_glfwWmBaseListenerWayland, NULL);
     }
     else if (strcmp(interface, "zxdg_decoration_manager_v1") == 0)
     {
         _glfw.wl.decorationManager =
-            wl_registry_bind(registry, name,
-                             &zxdg_decoration_manager_v1_interface,
-                             1);
+            (struct zxdg_decoration_manager_v1*)
+             wl_registry_bind(registry, name,
+                              &zxdg_decoration_manager_v1_interface, 1);
     }
     else if (strcmp(interface, "wp_viewporter") == 0)
     {
         _glfw.wl.viewporter =
+            (struct wp_viewporter*)
             wl_registry_bind(registry, name, &wp_viewporter_interface, 1);
     }
     else if (strcmp(interface, "zwp_relative_pointer_manager_v1") == 0)
     {
         _glfw.wl.relativePointerManager =
+            (struct zwp_relative_pointer_manager_v1*)
             wl_registry_bind(registry, name,
                              &zwp_relative_pointer_manager_v1_interface,
                              1);
@@ -176,6 +184,7 @@ static void _glfwRegistryHandleGlobalWayland(void* userData,
     else if (strcmp(interface, "zwp_pointer_constraints_v1") == 0)
     {
         _glfw.wl.pointerConstraints =
+            (struct zwp_pointer_constraints_v1*)
             wl_registry_bind(registry, name,
                              &zwp_pointer_constraints_v1_interface,
                              1);
@@ -183,6 +192,7 @@ static void _glfwRegistryHandleGlobalWayland(void* userData,
     else if (strcmp(interface, "zwp_idle_inhibit_manager_v1") == 0)
     {
         _glfw.wl.idleInhibitManager =
+            (struct zwp_idle_inhibit_manager_v1*)
             wl_registry_bind(registry, name,
                              &zwp_idle_inhibit_manager_v1_interface,
                              1);
@@ -190,6 +200,7 @@ static void _glfwRegistryHandleGlobalWayland(void* userData,
     else if (strcmp(interface, "xdg_activation_v1") == 0)
     {
         _glfw.wl.activationManager =
+            (struct xdg_activation_v1*)
             wl_registry_bind(registry, name,
                              &xdg_activation_v1_interface,
                              1);
@@ -197,6 +208,7 @@ static void _glfwRegistryHandleGlobalWayland(void* userData,
     else if (strcmp(interface, "wp_fractional_scale_manager_v1") == 0)
     {
         _glfw.wl.fractionalScaleManager =
+            (struct wp_fractional_scale_manager_v1*)
             wl_registry_bind(registry, name,
                              &wp_fractional_scale_manager_v1_interface,
                              1);

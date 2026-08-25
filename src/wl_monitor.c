@@ -49,7 +49,7 @@ static void _glfwOutputHandleGeometryWayland(void* userData,
                                              const char* model,
                                              int32_t transform)
 {
-    struct _GLFWmonitor* monitor = userData;
+    struct _GLFWmonitor* monitor = (_GLFWmonitor*) userData;
 
     monitor->wl.x = x;
     monitor->wl.y = y;
@@ -67,7 +67,7 @@ static void _glfwOutputHandleModeWayland(void* userData,
                                          int32_t height,
                                          int32_t refresh)
 {
-    struct _GLFWmonitor* monitor = userData;
+    struct _GLFWmonitor* monitor = (_GLFWmonitor*) userData;
     GLFWvidmode mode;
 
     mode.width = width;
@@ -79,7 +79,7 @@ static void _glfwOutputHandleModeWayland(void* userData,
 
     monitor->modeCount++;
     monitor->modes =
-        _glfw_realloc(monitor->modes, monitor->modeCount * sizeof(GLFWvidmode));
+        (GLFWvidmode*) _glfw_realloc(monitor->modes, monitor->modeCount * sizeof(GLFWvidmode));
     monitor->modes[monitor->modeCount - 1] = mode;
 
     if (flags & WL_OUTPUT_MODE_CURRENT)
@@ -88,7 +88,7 @@ static void _glfwOutputHandleModeWayland(void* userData,
 
 static void _glfwOutputHandleDoneWayland(void* userData, struct wl_output* output)
 {
-    struct _GLFWmonitor* monitor = userData;
+    struct _GLFWmonitor* monitor = (_GLFWmonitor*) userData;
 
     if (monitor->widthMM <= 0 || monitor->heightMM <= 0)
     {
@@ -111,7 +111,7 @@ static void _glfwOutputHandleScaleWayland(void* userData,
                                           struct wl_output* output,
                                           int32_t factor)
 {
-    struct _GLFWmonitor* monitor = userData;
+    struct _GLFWmonitor* monitor = (_GLFWmonitor*) userData;
 
     monitor->wl.scale = factor;
 
@@ -131,7 +131,7 @@ static void _glfwOutputHandleScaleWayland(void* userData,
 
 void _glfwOutputHandleNameWayland(void* userData, struct wl_output* wl_output, const char* name)
 {
-    struct _GLFWmonitor* monitor = userData;
+    struct _GLFWmonitor* monitor = (_GLFWmonitor*) userData;
 
     strncpy(monitor->name, name, sizeof(monitor->name) - 1);
 }
@@ -168,10 +168,10 @@ void _glfwAddOutputWayland(uint32_t name, uint32_t version)
 
     version = _glfw_min(version, WL_OUTPUT_NAME_SINCE_VERSION);
 
-    struct wl_output* output = wl_registry_bind(_glfw.wl.registry,
-                                                name,
-                                                &wl_output_interface,
-                                                version);
+    struct wl_output* output =
+        (struct wl_output*)
+        wl_registry_bind(_glfw.wl.registry, name, &wl_output_interface, version);
+
     if (!output)
         return;
 
